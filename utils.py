@@ -1,5 +1,47 @@
 import sqlite3
 import os
+import os
+import secrets
+
+TOKEN_FILE = "token.txt"
+
+def logout_user():
+    token = ler_token_txt()
+    if not token:
+        return
+
+    cursor.execute("UPDATE users SET token = NULL WHERE token = ?", (token,))
+    conn.commit()
+    apagar_token_txt()
+
+def gerar_token() -> str:
+    return secrets.token_hex(32)
+
+def salvar_token_txt(token: str):
+    with open(TOKEN_FILE, "w", encoding="utf-8") as f:
+        f.write(token)
+
+def ler_token_txt():
+    try:
+        with open(TOKEN_FILE, "r", encoding="utf-8") as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return None
+
+def apagar_token_txt():
+    try:
+        os.remove(TOKEN_FILE)
+    except FileNotFoundError:
+        pass
+
+def set_token_db(user_id: int, token: str):
+    cursor.execute("UPDATE users SET token = ? WHERE id = ?", (token, user_id))
+    conn.commit()
+
+def get_user_by_token(token: str):
+    cursor.execute("SELECT id FROM users WHERE token = ?", (token,))
+    row = cursor.fetchone()
+    return row[0] if row else None
 
 def clear_terminal():
     # Check the operating system name

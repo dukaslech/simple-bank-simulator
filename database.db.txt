@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    senha TEXT NOT NULL,
+    pixkey TEXT UNIQUE,
+    dinheiro REAL DEFAULT 0,
+    emprestimo REAL DEFAULT 0,
+    cargo TEXT DEFAULT 'cliente',
+    transacoes TEXT DEFAULT '[]',
+    token TEXT
+);

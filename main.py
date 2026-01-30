@@ -9,6 +9,14 @@ def sha256(texto: str) -> str:
 
 
 def main():
+    token = ler_token_txt()
+    if token:
+        uid = get_user_by_token(token)
+        if uid is not None:
+            painel_principal(uid)
+            return
+        apagar_token_txt()
+
     while True:
         clear_terminal()
         print("""Olá, você ainda não entrou em nenhuma conta
@@ -20,14 +28,17 @@ def main():
             email = input("Digite seu email: ")
             senha = input("Digite sua senha: ")
 
-            if logar(email=email, senha=sha256(senha)) == None:
+            uid = logar(email=email, senha=sha256(senha))
+            if uid is None:
                 print("Algo está errado ai parcero")
                 time.sleep(3)
             else:
-                userid = logar(email=email, senha=sha256(senha))
-                painel_principal(userid)
-                
+                # SEMPRE gera token novo ao logar por senha
+                token = gerar_token()
+                set_token_db(uid, token)
+                salvar_token_txt(token)
 
+                painel_principal(uid)
         elif opcao == 2:
             clear_terminal()
             nome = input('Digite seu nome: ')
@@ -63,6 +74,7 @@ def painel_principal(userid):
         1- Transferir
         2- Pegar ou pagar emprestimo
         3- Editar sua chave pix
+        4- Logout
         """)
 
         opcao = int(input("Escolha sua opção: "))
@@ -178,6 +190,9 @@ def painel_principal(userid):
                         clear_terminal()
                         print("Opção não encontrada!")
                         time.sleep(3)
+            case 4:
+                logout_user()
+                return  # volta pro menu inicial (main)
 
 
 
