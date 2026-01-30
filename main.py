@@ -63,15 +63,43 @@ def painel_principal(userid):
         1- Transferir
         2- Pegar ou pagar emprestimo
         3- Editar sua chave pix
-        4- Ver suas informações completa
         """)
 
         opcao = int(input("Escolha sua opção: "))
         match opcao:
             case 1:
-                clear_terminal()
-                print("Em construção ainda")
-                painel_principal(userid)
+                while True:
+                    clear_terminal()
+                    chavedix = input('Qual a frase dix da pessoa: ')
+                    pessoal = procurar_chave_dix(chavedix)
+                    if pessoal != None:
+                        clear_terminal()
+                        tnome, tdinheiro, temprestimo, tpixkey = pegar_infos2(pessoal)
+                        simorno = input(f'O nome da pessoa que você quer transferir o dinheiro é: {tnome}, tem certeza que quer transferir? (Sim/Não)')
+                        if simorno.lower() == "sim":
+                            while True:
+                                clear_terminal()
+                                quantia = int(input('Digite a Quantidade: '))
+                                if quantia <= dinheiro:
+                                    clear_terminal()
+                                    transferir(userid, pessoal, quantia)
+                                    print(f'Você transferiu {quantia} reais, para o {tnome}')
+                                    time.sleep(3)
+                                    painel_principal(userid)
+                                else:
+                                    clear_terminal()
+                                    print('Você não tem dinheiro suficiente!')
+                                    time.sleep(3)
+                                    painel_principal(userid)
+                        elif simorno.lower() == "não" or simorno.lower() == "nao":
+                            painel_principal(userid)
+                        else:
+                            print('Não existe essa opção')
+                            time.sleep(3)
+                    else:
+                        clear_terminal()
+                        print('Essa frase dix não existe')
+                        time.sleep(2)
             case 2:
                 
                 while True:
@@ -133,10 +161,16 @@ def painel_principal(userid):
                     """)
                     pixop = int(input('Digite sua opção: '))
                     if pixop == 1:
-                        pixn = input("Digite sua nova palavra Dix: ")
-                        mudar_pix(pixn, userid)
+                        while True:
+                            clear_terminal()
+                            pixn = input("Digite sua nova palavra Dix: ")
+                            if procurar_chave_dix(pixn) != None:
+                                print('Essa frase ja foi usada, tente outra')
+                                time.sleep(3)
+                            else:
+                                mudar_pix(pixn, userid)
 
-                        painel_principal(userid)
+                                painel_principal(userid)
                     elif pixop == 2:
                         clear_terminal()
                         painel_principal()
@@ -144,8 +178,7 @@ def painel_principal(userid):
                         clear_terminal()
                         print("Opção não encontrada!")
                         time.sleep(3)
-            case 4:
-                print('a')
+
 
 
 

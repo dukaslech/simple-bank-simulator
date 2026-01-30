@@ -80,6 +80,38 @@ def pegar_infos(userid):
 
     return nome, dinheiro, emprestimo, pixkey
 
+def pegar_infos2(userid):
+    userid = int(userid)
+    cursor.execute(
+        "SELECT nome FROM users WHERE id = ?",
+        (userid,)
+    )
+    row = cursor.fetchone()
+    tnome = row[0] if row else None
+
+    cursor.execute(
+        "SELECT dinheiro FROM users WHERE id = ?",
+        (userid,)
+    )
+    row = cursor.fetchone()
+    tdinheiro = row[0] if row else None
+
+    cursor.execute(
+        "SELECT emprestimo FROM users WHERE id = ?",
+        (userid,)
+    )
+    row = cursor.fetchone()
+    temprestimo = row[0] if row else None
+
+    cursor.execute(
+        "SELECT pixkey FROM users WHERE id = ?",
+        (userid,)
+    )
+    row = cursor.fetchone()
+    tpixkey = row[0] if row else None
+
+    return tnome, tdinheiro, temprestimo, tpixkey
+
 
 def mudar_pix(pix, userid):
     cursor.execute(
@@ -118,5 +150,32 @@ def solicitar_emprestimo(userid, valor):
          SET emprestimo = emprestimo + ? \
          WHERE id = ? ",
         (valor, userid)
+    )
+    conn.commit()
+
+def procurar_chave_dix(chave):
+    query = "SELECT id FROM users WHERE 1=1 and pixkey = ?"
+    
+    cursor.execute("SELECT id FROM users WHERE 1=1 and pixkey = ?", (chave,))
+    row = cursor.fetchone()
+    sla = row[0] if row else None
+    return sla
+
+if procurar_chave_dix("admin") == 4:
+    print('foi')
+
+def transferir(userid, idtrans, valor):
+    cursor.execute(
+        "UPDATE users \
+         SET dinheiro = dinheiro - ? \
+         WHERE id = ? ",
+        (valor, userid)
+    )
+    conn.commit()
+    cursor.execute(
+        "UPDATE users \
+         SET dinheiro = dinheiro + ? \
+         WHERE id = ? ",
+        (valor, idtrans)
     )
     conn.commit()
